@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+
+<canvas id="myCanvas" class="droppable" width="400" height="400" >
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+<script>
+var sum = 0 ;
+var ran_values = [];
+for(var i=0;i<4;i++)
+{
+var t = i + 1 ;
+var x = {"value":t,"startX":'',"startY":'','angle':''}; 
+ran_values.push(x);
+sum = sum + t ; 
+}
+
+console.log(ran_values);
+var gen_values = [];
+//var sum = ran_values.reduce((a, b) => a + b, 0);
+
+for(var i=0;i<ran_values.length;i++)
+{
+let x =  (ran_values[i].value / sum) * 100 ;
+gen_values[i]  = (x * 6.28) / 100 ;
+}
+console.log(gen_values);
+
+var c = document.getElementById("myCanvas");
+var ctx = [] ;
+var temp = 0;
+var dots = [];
+var temp_end = gen_values[0];
+for(var i=0;i<ran_values.length;i++)
+{
+ctx[i] = c.getContext("2d");
+ctx[i].beginPath();
+var startangle = temp;
+var endangle = gen_values[i] +  startangle;
+ctx[i].arc(200,200, 100,startangle,endangle);
+ctx[i].lineWidth = 50;
+ctx[i].strokeStyle = random_rgba();
+
+ctx[i].stroke();
+ran_values[i].startX =  100 * Math.cos(startangle) + 200;
+ran_values[i].startY = 100 * Math.sin(startangle) + 200;
+var diffX = ran_values[i].startX - 200;
+var diffY = ran_values[i].startY - 200;
+var angle = ( Math.atan2(diffY, diffX) ) * (180/Math.PI) ;
+if(Math.sign(angle)<0)
+{
+let x = angle + 180  ;
+angle = 180 + x ;
+}
+ran_values[i].angle = angle ; 
+temp=endangle;
+}
+
+console.log(ran_values)
+function random_rgba() {
+    var o = Math.round, r = Math.random, s = 255;
+    return 'rgba(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ',' + r().toFixed(1) + ')';
+}
+
+
+function test(event)
+{
+
+console.log(event.clientX,event.clientY);
+  var diffX = event.clientX - 200;
+var diffY = event.clientY - 200;
+var angle = Math.atan2(diffY, diffX);
+ angle = angle * (180/Math.PI);
+// console.log(angle);
+ 
+ if(Math.sign(angle) < 0)
+{
+let x = angle + 180  ;
+angle = 180 + x ;
+}
+
+ for(var i=0;i<ran_values.length;i++)
+ {
+ var j ;
+ if(i==ran_values.length-1)
+ {
+  j=360;
+ }
+ else
+ {
+  j = ran_values[i+1].angle;
+
+ }
+ 
+ var k = ran_values[i].angle;
+ 
+ 
+	if(angle > k && angle < j)
+	{
+	c.title = ran_values[i].value ;
+	break;
+	}
+ }
+
+ }
+
+document.addEventListener("mousemove", test);
+
+  
+</script> 
+
+</body>
+</html>
